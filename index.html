@@ -59,7 +59,7 @@ header p{font-size:12px;color:var(--mute)}
 .pbox .row button:disabled{opacity:.5;cursor:not-allowed}
 html.framed .who{display:none!important}
 /* embedded + signed in: show only the chat card */
-html.framed.authed header{display:none}
+html.framed header{display:none}
 html.framed.authed main{max-width:none;padding:0}
 html.framed.authed .chat{height:100vh;min-height:0;border-radius:0;border:0}
 .prof{position:relative}
@@ -160,6 +160,28 @@ ul.plain{list-style:none}
 ul.plain li{padding:7px 0;font-size:14px;border-bottom:1px solid var(--line)}
 ul.plain li:last-child{border-bottom:none}
 .note{font-size:12px;color:var(--mute);margin-top:12px}
+
+/* ===== Embedded (inside QE) signed-out page ===== */
+.embedintro{display:none}
+html.framed .hero,html.framed #landingHead,html.framed #landingPlatforms{display:none!important}
+html.framed .embedintro{display:block;max-width:880px;margin:0 auto;padding:36px 16px 48px}
+.ei-top{text-align:center}
+.ei-top .eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--brand);font-weight:700}
+.ei-top h2{font-size:clamp(26px,4vw,38px);line-height:1.15;margin:10px auto 12px;max-width:640px}
+.ei-top p{color:var(--mute);max-width:560px;margin:0 auto;line-height:1.6}
+.ei-chat{margin:28px auto 8px;max-width:560px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.ei-b{max-width:82%;padding:10px 14px;border-radius:16px;font-size:14px;line-height:1.5}
+.ei-b.me{align-self:flex-end;background:var(--brand);color:#fff;border-bottom-right-radius:4px}
+.ei-b.ai{align-self:flex-start;background:var(--brandSoft);color:var(--ink);border-bottom-left-radius:4px}
+.ei-note{text-align:center;font-size:11px;color:var(--mute);margin-top:6px}
+.ei-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:30px}
+.ei-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.ei-card b{display:block;font-size:15px;margin-bottom:6px}.ei-card span{font-size:13px;color:var(--mute);line-height:1.55}
+.ei-steps{margin-top:30px;background:var(--brandSoft);border-radius:14px;padding:20px 22px}
+.ei-steps h3{font-size:15px;margin-bottom:12px}
+.ei-steps ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px;font-size:14px;line-height:1.5}
+.ei-cta{text-align:center;margin-top:24px;font-size:14px;color:var(--mute)}
+.ei-cta b{color:var(--ink)}
 </style>
 <script src="config.js"></script>
 </head>
@@ -218,6 +240,32 @@ ul.plain li:last-child{border-bottom:none}
         <button class="ghostbtn" id="heroSignIn">Login</button>
       </div>
       <small>Free to join. No payment details needed.</small>
+    </div>
+    <div class="embedintro">
+      <div class="ei-top">
+        <div class="eyebrow">Qmaz assistant</div>
+        <h2>Ask questions, get clear answers</h2>
+        <p>Qmaz is a friendly assistant for your school work. Sign in to start chatting, and keep your profile and photo across Quality Education.</p>
+      </div>
+      <div class="ei-chat" aria-label="Example conversation">
+        <div class="ei-b me">Can you explain photosynthesis in simple words?</div>
+        <div class="ei-b ai">Sure! Plants use sunlight, water and carbon dioxide to make their own food (sugar) and release oxygen. Want a short quiz on it?</div>
+        <div class="ei-note">Example only. Sign in to chat for real.</div>
+      </div>
+      <div class="ei-grid">
+        <div class="ei-card"><b>Ask in your own words</b><span>Type a question the way you would ask a teacher. No special commands needed.</span></div>
+        <div class="ei-card"><b>Step-by-step help</b><span>Get explanations broken into small steps, with examples you can follow.</span></div>
+        <div class="ei-card"><b>Your own account</b><span>Sign up with your email, confirm a short code, and add a photo to your profile.</span></div>
+      </div>
+      <div class="ei-steps">
+        <h3>How to get started</h3>
+        <ol>
+          <li>Click <b>Start for Free</b> at the top right of the page.</li>
+          <li>Enter the 6-digit code sent to your email.</li>
+          <li>Start chatting with the Qmaz assistant.</li>
+        </ol>
+      </div>
+      <div class="ei-cta">Already have an account? Use <b>Login</b> at the top right.</div>
     </div>
     <h2 class="sechead" id="landingHead" hidden>Our platforms</h2>
     <div class="plist" id="landingPlatforms"></div>
@@ -623,6 +671,8 @@ window.addEventListener("message", e => {
   if(!FRAMED || e.origin !== PARENT_ORIGIN || e.source !== window.parent || !e.data || e.data.type !== "qmaz-cmd") return;
   if(e.data.cmd === "photo" && session()) openPhoto();
   else if(e.data.cmd === "signout") $("signOut").click();
+  else if(e.data.cmd === "signin" && !session()) goSignIn();
+  else if(e.data.cmd === "signup" && !session()) goStart();
 });
 
 /* ============ ROUTER ============ */
